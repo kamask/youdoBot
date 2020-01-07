@@ -1,0 +1,16 @@
+{
+  "name": "youdoBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "keywords": [],
+  "author": "KamaSK",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.0.0-alpha.5",
+    "telegraf": "^3.35.0"
+  }
+}
