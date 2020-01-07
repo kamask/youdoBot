@@ -1,6 +1,7 @@
 const config = require('./config')
 const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
+const Extra = require('telegraf/extra')
 const bot = new Telegraf(config.telegramBotToken)
 bot.start((ctx) => ctx.reply('Привет друг)\nНапиши своё любимое число)'))
 bot.launch()
@@ -11,15 +12,13 @@ bot.hears('777888', ctx => {
     ctx.reply('Начинаю ловить задания)')
 })
 
-bot.hears(/^\/answer_\d{6,8}$/, ctx => {
-    let task = ctx.message.text.split('_')[1]
-    ctx.reply(`
+bot.action(/^answer_(\d{6,8})$/, async ctx => {
+    await ctx.answerCbQuery('Гарику ПРУВЕТ!!!')
+    let task = ctx.match[1]
+    ctx.telegram.sendMessage(ctx.chat.id, `
 Задание №${task}
-
-    `, Markup.keyboard(['/simple', '/inline', '/pyramid'])
-        .oneTime()
-        .resize()
-        .extra())
+    Гарику прувет!!!
+    `)
 })
 
 module.exports.send = function (task) {
@@ -41,10 +40,5 @@ ${task.price} ${task.priceType}
 <a href="${task.nameLink}">${task.name}</a>
 
 -------------------
-
-/answer_${task.id}
-
--------------------
-
-    `, {parse_mode: "HTML", disable_web_page_preview: true})
+    `, {disable_web_page_preview: true, parse_mode: "HTML", reply_markup: Markup.inlineKeyboard([Markup.callbackButton('Работаем)', 'answer_'+task.id)])})
 }

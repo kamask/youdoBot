@@ -28,7 +28,7 @@ async function taskWaiting(){
 }
 
 module.exports = async function(id){
-    console.log('TaskGet!')
+    console.log('TaskGet! - '+id)
     await driver.get('https://youdo.com/t'+id)
     await driver.wait(until.elementLocated(By.className('b-task-block__header__title')))
     await driver.sleep(500)
