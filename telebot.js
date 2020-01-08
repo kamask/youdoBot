@@ -8,7 +8,7 @@ const bot = new Telegraf(config.telegramBotToken)
 const state = {}
 const tasksHistory = {}
 
-let chatId, startId, nameGeting = false
+let chatId = null, nameGeting = false
 
 bot.start((ctx) => ctx.reply('Привет друг)\nНапиши своё любимое число)'))
 
@@ -17,20 +17,23 @@ bot.hears(data.startPass, ctx => {
     bot.telegram.deleteMessage(chatId, ctx.update.message.message_id)
     ctx.reply('Начинаю ловить задания)')
 
-    send({
-        id: '6865646',
-        title: 'Установка ПО и офиса',
-        text: 'Установить Windows и офис',
-        date: 'Начать\n9 января 2020, 12:00\nЗавершить\n11 января 2020, 20:00',
-        address: 'Керченская улица, 7, Москва',
-        price: 'Средний — до 2 500 Р',
-        priceType: 'Напрямую исполнителю без гарантий и компенсаций',
-        name: 'Сергей Д.',
-        nameLink: 'https://youdo.com/u317918'
-    })
+    // ****************Testing*********************
+    // send({
+    //     id: '6865646',
+    //     title: 'Установка ПО и офиса',
+    //     text: 'Установить Windows и офис',
+    //     date: 'Начать\n9 января 2020, 12:00\nЗавершить\n11 января 2020, 20:00',
+    //     address: 'Керченская улица, 7, Москва',
+    //     price: 'Средний — до 2 500 Р',
+    //     priceType: 'Напрямую исполнителю без гарантий и компенсаций',
+    //     name: 'Сергей Д.',
+    //     nameLink: 'https://youdo.com/u317918'
+    // })
 })
 
 async function send(task){
+    if(!chatId) return
+
     tasksHistory[task.id] = task
 
     tasksHistory[task.id].msgId = (await bot.telegram.sendMessage(chatId, `
@@ -58,6 +61,7 @@ ${task.price} ${task.priceType}
         parse_mode: "HTML",
         reply_markup: Markup.inlineKeyboard([Markup.callbackButton('Взять задание №'+task.id, 'answer_'+task.id)])
     })).message_id
+    return 777
 }
 
 bot.action(/^answer_(\d{6,8})$/, async ctx => {
@@ -126,8 +130,7 @@ function setTemplate(task, mid, delmid = null){
                 Markup.callbackButton(data.answer.templateName[7], 'template_'+task+'_7'),
                 Markup.callbackButton(data.answer.templateName[8], 'template_'+task+'_8')
             ],[
-                Markup.callbackButton(data.answer.templateName[9], 'template_'+task+'_9'),
-                Markup.callbackButton(data.answer.templateName[10], 'template_'+task+'_10')
+                Markup.callbackButton(data.answer.templateName[9], 'template_'+task+'_9')
             ],[Markup.callbackButton('Отмена', 'cancel_'+task)]
         ])
     })
@@ -244,6 +247,24 @@ bot.action(/^access_(\d{6,8})$/, async ctx => {
     ctx.answerCbQuery()
     const mid = ctx.update.callback_query.message.message_id
     const task = state[ctx.match[1]]
+
+    bot.telegram.editMessageText(chatId, mid, null, `
+--------------------
+Задание №${task}
+--------------------
+Имя: ${state[task].nameAnswer || 'без имени'}
+--------------------
+Шаблон: ${data.answer.templateName[state[task].templateName]}
+--------------------
+Время: ${data.answer.time[state[task].time[0]]} ${state[task].time[1] === '1' ? 'сейчас свободен' : ''}
+--------------------
+Оплата: ${state[task].priceAnswer}
+--------------------
+
+            Отправка отклика...
+    `, { reply_markup: Markup.inlineKeyboard([
+            Markup.callbackButton('Отмена', 'cancel_'+task)
+        ])})
 
     await answerTask(task)
 

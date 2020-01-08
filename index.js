@@ -7,12 +7,12 @@ webrun()
 
 
 async function webrun(){
-    const driver = await new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().headless()).build()
+    const driver = await new Builder().forBrowser('chrome')/*.setChromeOptions(new chrome.Options().headless())*/.build()
     try {
 
 
 /*-----------------------   Login   ----------------------*/
-        await driver.get('https://youdo.com/verification')
+        await driver.get('https://youdo.com/verification/')
         await driver.wait(until.elementLocated(By.className('b-vpromo-hero__button'))).click()
         await driver.wait(until.elementLocated(By.className('dialog-signin')))
         await driver.wait(until.elementLocated(By.linkText('Войдите'))).click()
@@ -22,7 +22,7 @@ async function webrun(){
 /*-----------------------   Get Tasks   ----------------------*/
         await driver.sleep(500)
         await driver.get('https://youdo.com/tasks-all-opened-all-1')
-        console.log('Main Window Auth')
+        console.log('Driver Main Window - Auth')
 
         let currentLastTask, lastTask
 
@@ -36,11 +36,12 @@ async function webrun(){
         }
 
 
+        getTaskInfo('6869391')
         getTaskInfo(currentLastTask)
 
         while(true){
             try{
-                await driver.sleep(100)
+                await driver.sleep(500)
                 await driver.navigate().refresh()
                 lastTask = Number(await driver.wait(until.elementLocated(By.className('title___7da37'))).getAttribute('data-id'))
                 if(currentLastTask === lastTask) continue
