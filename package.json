@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "telebot": "node ./telebot.js"
   },
   "keywords": [],
   "author": "KamaSK",
