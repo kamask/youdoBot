@@ -250,20 +250,20 @@ bot.action(/^access_(\d{6,8})$/, async ctx => {
 
     bot.telegram.editMessageText(chatId, mid, null, `
 --------------------
-Задание №${task}
+Задание №${task.id}
 --------------------
-Имя: ${state[task].nameAnswer || 'без имени'}
+Имя: ${task.nameAnswer || 'без имени'}
 --------------------
-Шаблон: ${data.answer.templateName[state[task].templateName]}
+Шаблон: ${data.answer.templateName[task.templateName]}
 --------------------
-Время: ${data.answer.time[state[task].time[0]]} ${state[task].time[1] === '1' ? 'сейчас свободен' : ''}
+Время: ${data.answer.time[task.time[0]]} ${task.time[1] === '1' ? 'сейчас свободен' : ''}
 --------------------
-Оплата: ${state[task].priceAnswer}
+Оплата: ${task.priceAnswer}
 --------------------
 
             Отправка отклика...
     `, { reply_markup: Markup.inlineKeyboard([
-            Markup.callbackButton('Отмена', 'cancel_'+task)
+            Markup.callbackButton('Отмена', 'cancel_'+task.id)
         ])})
 
     await answerTask(task)
