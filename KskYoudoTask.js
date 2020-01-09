@@ -1,6 +1,8 @@
 function log(...p){console.log(...p)}
-const {youdo} = require('./config')
+const {telegramBotToken} = require('./config')
 const KskWD = require('./KskWebDriver')
+const TeleBot = require('./KskTeleBot')
+const tBot = new TeleBot(telegramBotToken)
 
 class self{
     static #wd = null
@@ -12,7 +14,7 @@ class self{
     static async init(){
         self.#process = true
         self.#wd = await KskWD.build('chrome')
-        await self.#wd.youdoAuth(youdo, 'Get Task Info')
+        await self.#wd.youdoAuth('Get Task Info')
         self.#process = false
         return self
     }
@@ -53,8 +55,11 @@ class self{
         this.info = info
     }
 
-    sendToTelegramBot(t){
-        t.send(this.info.title)
+    sendToTelegramBot(){
+        tBot.send(require('./tpl/telebot/newTask')(this.info), {
+            parse_mode: 'HTML',
+            reply_markup: tBot.m.inlineKeyboard([tBot.m.callbackButton('Откликнуться №' + this.id, 'answer_'+this.id)])
+        })
     }
 }
 

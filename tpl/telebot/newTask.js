@@ -1,22 +1,24 @@
-module.exports = function (task) {
+module.exports = function ({id, title, text, date, address, price, priceMethod, place, name, authorId}) {
     return `
 ------------------
 
-<b><a href="https://youdo.com/t${task.id}">${task.title}</a></b>
+<b><a href="https://youdo.com/t${id}">${title}</a></b>
 
-${task.text}
-
--------------------
-${task.date}
--------------------
-
-<a href="https://yandex.ru/maps/?text=${task.address}">${task.address}</a>
+${text}
 
 -------------------
-${task.price} ${task.priceType}
+${date}
 -------------------
 
-<a href="${task.nameLink}">${task.name}</a>
+<a href="https://yandex.ru/maps/?text=${address}">${address}</a>
+
+${place}
+
+-------------------
+${price} ${priceMethod}
+-------------------
+
+<a href="http://youdo.com/u${authorId}">${name}</a>
 
 -------------------
     `

@@ -1,3 +1,4 @@
+const Markup = require('telegraf/markup')
 module.exports = function (task) {
     return Markup.inlineKeyboard([
         [

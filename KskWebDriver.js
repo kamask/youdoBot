@@ -1,5 +1,6 @@
 function log(...p){console.log(...p)}
 const {Builder, By, Key, until} = require('selenium-webdriver')
+const {youdo} = require('./config')
 
 module.exports = class self{
     static key = Key
@@ -49,7 +50,7 @@ module.exports = class self{
         })
     }
 
-    async youdoAuth(youdo,name){
+    async youdoAuth(name){
         let loginButton, loginInput, passwordInput, uid, i = 1, secForWaitAuth = 1500
 
         await this.open('https://youdo.com/tasks-all-opened-all-1')

@@ -2,15 +2,12 @@
  *  Abbr:
  *      lt - last task
  */
-const {youdo, telegramBotToken} = require('./config')
 const KskWD = require('./KskWebDriver')
 const Task = require('./KskYoudoTask')
-const TeleBot = require('./KskTeleBot')
-const tBot = new TeleBot(telegramBotToken)
 
 KskWD.build('chrome').then(async wd => {
 
-    await wd.youdoAuth(youdo,'Main Window')
+    await wd.youdoAuth('Main Window')
 
     let currentLtId = null
 
@@ -22,7 +19,7 @@ KskWD.build('chrome').then(async wd => {
 
             if(!currentLtId){
                 currentLtId = ltId;
-                (await Task.build(ltId)).sendToTelegramBot(tBot)
+                (await Task.build(ltId)).sendToTelegramBot()
             }
 
             let i = 3, newTasksId = []
@@ -35,7 +32,7 @@ KskWD.build('chrome').then(async wd => {
             if(newTasksId.length > 0){
                 currentLtId = newTasksId[0]
                 do{
-                    (await Task.build(newTasksId.shift())).sendToTelegramBot(tBot)
+                    (await Task.build(newTasksId.shift())).sendToTelegramBot()
                 }while(newTasksId.length > 0)
             }
 
@@ -48,5 +45,3 @@ KskWD.build('chrome').then(async wd => {
     }
 
 })
-
-function log(...p){console.log(...p)}
