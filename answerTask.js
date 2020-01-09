@@ -3,7 +3,7 @@ const config = require('./config')
 const {Builder, By, Key, until} = require('selenium-webdriver')
 const chrome = require('selenium-webdriver/chrome')
 
-let driver
+let driver, done = false
 taskWaiting()
 
 async function taskWaiting() {
@@ -15,12 +15,16 @@ async function taskWaiting() {
     await driver.wait(until.elementLocated(By.linkText('Войдите'))).click()
     await driver.wait(until.elementLocated(By.name('login'))).sendKeys(config.youdo.login)
     await driver.wait(until.elementLocated(By.name('password'))).sendKeys(config.youdo.password, Key.RETURN)
+    done = true
     console.log('Driver Answer Task - Auth')
 }
 
 module.exports = async function(task){
+    if(!done) return false
     await driver.get('https://youdo.com/t'+task.id)
+    console.log('answer open')
     await driver.wait(until.elementLocated(By.className('js-addOffer'))).click()
+    console.log('answer click')
     await driver.wait(until.elementLocated(By.name('Description'))).sendKeys(`
 Здравствуйте${task.nameAnswer}, готов ${task.templateName === '10' ? 'приступить' : 'приехать'} ${task.time[0] === '1' ? 'в течение часа или ' : task.time[0] === '2' ? ' в течение 30 мин. ' : ''}в удобное для Вас время и дату${task.time[1] === '1' ? ', на данный момент свободен' : ''}. 
 Согласен на ${task.priceAnswer}руб.
@@ -29,6 +33,8 @@ ${data.answer.templateText[Number(task.templateName)]}
 Всю работу провожу быстро и качественно! Работаю на репутацию!
 Обращайтесь!
     `)
+    console.log('answer text')
     await driver.wait(until.elementLocated(By.name('Price'))).sendKeys(task.priceAnswer, Key.RETURN)
+    console.log('answer price send')
     return 777
 }
