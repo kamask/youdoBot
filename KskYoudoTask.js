@@ -1,8 +1,7 @@
 function log(...p){console.log(...p)}
-const {telegramBotToken} = require('./config')
 const KskWD = require('./KskWebDriver')
-const TeleBot = require('./KskTeleBot')
-const tBot = new TeleBot(telegramBotToken)
+const AnswerTask = require('./KskAnswerTask')
+const tBot = require('./KskTeleBot')
 
 class self{
     static #wd = null
@@ -58,11 +57,17 @@ class self{
     sendToTelegramBot(){
         tBot.send(require('./tpl/telebot/newTask')(this.info), {
             parse_mode: 'HTML',
+            disable_web_page_preview: true,
             reply_markup: tBot.m.inlineKeyboard([tBot.m.callbackButton('Откликнуться №' + this.id, 'answer_'+this.id)])
+        })
+
+        tBot.action(/^answer_(\d{6,8})$/, ctx => {
+            ctx.answerCbQuery('Тебя выберут, не сомневайся)')
+            AnswerTask.build(ctx.match[1])
         })
     }
 }
 
-self.init()
+setTimeout(self.init, 1000)
 
 module.exports = self

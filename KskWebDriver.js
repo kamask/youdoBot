@@ -9,6 +9,7 @@ module.exports = class self{
         const wd = new self()
 
         wd.#driver = await new Builder().forBrowser(browser).build()
+
         wd.#driver.manage().window().minimize()
 
         wd.sleep = wd.#driver.sleep
@@ -65,7 +66,11 @@ module.exports = class self{
             await this.reload(secForWaitAuth)
             uid = await this.cssLocated('.block___d4bb2', 500)
 
-            if(uid) log(name + ' - auth')
+            if(uid){
+                let authCount = storage.get('authCount') || 0
+                storage.set('authCount', ++authCount)
+                log(name + ' - auth')
+            }
             else{
                 secForWaitAuth += 500
                 log(name + ' - not auth, retry - ' + i++)

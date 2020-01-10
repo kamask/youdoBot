@@ -2,6 +2,7 @@
  *  Abbr:
  *      lt - last task
  */
+global.storage = new Map()
 const KskWD = require('./KskWebDriver')
 const Task = require('./KskYoudoTask')
 
@@ -9,8 +10,13 @@ KskWD.build('chrome').then(async wd => {
 
     await wd.youdoAuth('Main Window')
 
-    let currentLtId = null
+    await new Promise(resolve => {
+        setInterval(()=>{
+            if(storage.get('authCount') === 3) resolve()
+        }, 300)
+    })
 
+    let currentLtId = null
     while(true){
         try{
 
@@ -42,6 +48,7 @@ KskWD.build('chrome').then(async wd => {
             console.error(e)
             break
         }
+
     }
 
 })
