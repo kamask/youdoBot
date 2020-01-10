@@ -24,8 +24,10 @@ KskWD.build('chrome').then(async wd => {
             let ltId = await ltLink.getAttribute('data-id')
 
             if(!currentLtId){
-                currentLtId = ltId;
-                (await Task.build(ltId)).sendToTelegramBot()
+                currentLtId = ltId
+                const task = await Task.build(ltId)
+                storage.set(ltId, task)
+                task.sendToTelegramBot()
             }
 
             let i = 3, newTasksId = []
@@ -38,7 +40,9 @@ KskWD.build('chrome').then(async wd => {
             if(newTasksId.length > 0){
                 currentLtId = newTasksId[0]
                 do{
-                    (await Task.build(newTasksId.shift())).sendToTelegramBot()
+                    const task = await Task.build(ltId)
+                    storage.set(ltId, task)
+                    task.sendToTelegramBot()
                 }while(newTasksId.length > 0)
             }
 

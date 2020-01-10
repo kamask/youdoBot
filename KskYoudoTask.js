@@ -19,7 +19,7 @@ class self{
     }
 
     static async build(id){
-        log('\n---\nNew task - ' + id)
+        log('\n---\nNew task - ' + id + ' ' + new Date().toLocaleString('ru-RU'))
         if(!self.#wd && !self.#process) await self.init()
         if(self.#process){
             await new Promise(resolve => {
@@ -35,6 +35,7 @@ class self{
         log('Task info getting - ' + id + ' ...')
         await d.open('https://youdo.com/t' + id)
         const info = {
+            id,
             title: await (await d.cssLocated('.b-task-block__header__title')).getText(),
             text: await (await d.cssLocated('.b-task-block__description')).getText(),
             address: await (await d.cssLocated('.b-task-block__address > .b-task-block__info')).getText(),
@@ -43,7 +44,7 @@ class self{
             priceMethod: await (await d.cssLocated('.b-task-block__payment > .b-task-block__info')).getText(),
             place: await (await d.cssLocated('.b-task-block__location > .b-task-block__info')).getText(),
             name: await (await d.cssLocated('.b-task-block__userinfo__name')).getText(),
-            authorId: (await (await d.cssLocated('.b-task-block__userinfo__name')).getAttribute('href')).substr(2)
+            authorLink: (await (await d.cssLocated('.b-task-block__userinfo__name')).getAttribute('href'))
         }
         log('Task info getting done! - ' + id + '\n---')
         return new self(id, info)
@@ -55,10 +56,12 @@ class self{
     }
 
     sendToTelegramBot(){
+        const cbb = tBot.m.callbackButton
+
         tBot.send(require('./tpl/telebot/newTask')(this.info), {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
-            reply_markup: tBot.m.inlineKeyboard([tBot.m.callbackButton('Откликнуться №' + this.id, 'answer_'+this.id)])
+            reply_markup: tBot.m.inlineKeyboard([cbb('Откликнуться №' + this.id, 'answer_'+this.id)])
         })
 
         tBot.action(/^answer_(\d{6,8})$/, ctx => {

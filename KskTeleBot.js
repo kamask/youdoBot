@@ -34,28 +34,28 @@ class self {
         this.#bot.launch()
     }
 
-    send(t, o = undefined) {
+    send(text, opt = undefined) {
         if (!this.#chatId) return false
-        return this.#bot.telegram.sendMessage(this.#chatId, t, o)
+        return this.t.sendMessage(this.#chatId, text, opt)
     }
 
     delete(msg) {
         if (!this.#chatId) return false
-        return this.#bot.telegram.deleteMessage(this.#chatId, msg)
+        return this.t.deleteMessage(this.#chatId, msg)
     }
 
-    edit(msg, t, o = undefined) {
+    edit(msg, text, opt = undefined) {
         if (!this.#chatId) return false
-        return this.#bot.telegram.editMessageText(this.#chatId, msg, null, t, o)
+        return this.t.editMessageText(this.#chatId, msg, null, text, opt)
     }
 
-    editMarkup(msg, m) {
+    editMarkup(msg, mark) {
         if (!this.#chatId) return false
-        return this.#bot.telegram.editMessageReplyMarkup(this.#chatId, msg, null, m)
+        return this.t.editMessageReplyMarkup(this.#chatId, msg, null, mark)
     }
 
-    action(action, handler) {
-        this.#bot.action(action, handler)
+    action(action, handle) {
+        this.#bot.action(action, handle)
     }
 }
 

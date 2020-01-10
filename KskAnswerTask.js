@@ -32,9 +32,10 @@ class self {
             })
         }
         const d = self.#wd
+        const task = storage.get(id)
+        log(task.info.title)
         log('Answer sending - ' + id + ' ...')
         await d.open('https://youdo.com/t' + id)
-
         log('Task info getting done! - ' + id + '\n---')
         return new self()
     }

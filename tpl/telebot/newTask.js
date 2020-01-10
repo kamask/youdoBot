@@ -1,7 +1,5 @@
-module.exports = function ({id, title, text, date, address, price, priceMethod, place, name, authorId}) {
+module.exports = function ({id, title, text, date, address, price, priceMethod, place, name, authorLink}) {
     return `
-------------------
-
 <b><a href="https://youdo.com/t${id}">${title}</a></b>
 
 ${text}
@@ -18,7 +16,7 @@ ${place}
 ${price} ${priceMethod}
 -------------------
 
-<a href="http://youdo.com/u${authorId}">${name}</a>
+<a href="${authorLink}">${name}</a>
 
 -------------------
     `
