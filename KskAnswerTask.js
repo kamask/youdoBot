@@ -1,6 +1,7 @@
 function log(...p){console.log(...p)}
 const KskWD = require('./KskWebDriver')
 const tBot = require('./KskTeleBot')
+const textNewTask = require('./tpl/telebot/newTask')
 
 class self {
     static #wd = null
@@ -20,23 +21,27 @@ class self {
 
     static async build(id){
         log('\n---\nNew answer task build - ' + id + ' ...')
+
         if(!self.#wd && !self.#process) await self.init()
-        if(self.#process){
-            await new Promise(resolve => {
-                setInterval(()=>{
-                    if(!self.#process){
-                        self.#process = true
-                        resolve()
-                    }
-                },100)
-            })
-        }
-        const d = self.#wd
+        if(self.#process) await new Promise(resolve => { setInterval(()=>{ if(!self.#process) resolve() },100) })
         const task = storage.get(id)
-        log(task.info.title)
+
+        tBot.editMarkup(task.telegramMessageId, require('./kbs/kbName')(task.info))
+        tBot.action(new RegExp('^name_'+id+'_(\\d)$'), async ctx => {
+            ctx.answerCbQuery()
+            console.log(task.id)
+
+        })
+
         log('Answer sending - ' + id + ' ...')
+        self.#process = true
+        const d = self.#wd
         await d.open('https://youdo.com/t' + id)
-        log('Task info getting done! - ' + id + '\n---')
+
+
+
+        log('Answer sending done! - ' + id + '\n---')
+        self.#process = false
         return new self()
     }
 }

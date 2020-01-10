@@ -19,18 +19,10 @@ class self{
     }
 
     static async build(id){
-        log('\n---\nNew task - ' + id + ' ' + new Date().toLocaleString('ru-RU'))
+        log('\n---\nNew task - ' + id + ' | ' + new Date().toLocaleString('ru-RU'))
         if(!self.#wd && !self.#process) await self.init()
-        if(self.#process){
-            await new Promise(resolve => {
-                setInterval(()=>{
-                    if(!self.#process){
-                        self.#process = true
-                        resolve()
-                    }
-                },100)
-            })
-        }
+        if(self.#process) await new Promise(resolve => {  setInterval(()=>{ if(!self.#process) resolve() },100) })
+        self.#process = true
         const d = self.#wd
         log('Task info getting - ' + id + ' ...')
         await d.open('https://youdo.com/t' + id)
@@ -47,6 +39,7 @@ class self{
             authorLink: (await (await d.cssLocated('.b-task-block__userinfo__name')).getAttribute('href'))
         }
         log('Task info getting done! - ' + id + '\n---')
+        self.#process = false
         return new self(id, info)
     }
 
@@ -58,10 +51,13 @@ class self{
     sendToTelegramBot(){
         const cbb = tBot.m.callbackButton
 
-        tBot.send(require('./tpl/telebot/newTask')(this.info), {
+        const taskSendedRes = tBot.send(require('./tpl/telebot/newTask')(this.info), {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
-            reply_markup: tBot.m.inlineKeyboard([cbb('Откликнуться №' + this.id, 'answer_'+this.id)])
+            reply_markup: tBot.m.inlineKeyboard([cbb('Взять задание №' + this.id, 'answer_'+this.id)])
+        })
+        if(taskSendedRes) taskSendedRes.then(ctx => {
+            this.telegramMessageId = ctx.message_id
         })
 
         tBot.action(/^answer_(\d{6,8})$/, ctx => {

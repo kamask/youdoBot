@@ -1,12 +1,14 @@
 const Markup = require('telegraf/markup')
-module.exports = function (task) {
+const cbb = Markup.callbackButton
+
+module.exports = ({id, name}) => {
     return Markup.inlineKeyboard([
         [
-            Markup.callbackButton(task.name.split(' ')[0], 'name_'+task.id+'_0'),
-            Markup.callbackButton('Без имени', 'name_'+task.id+'_1'),
-            Markup.callbackButton('Ввести', 'name_'+task.id+'_2')
+            cbb(name.split(' ')[0], 'name_' + id + '_0'),
+            cbb('Без имени', 'name_' + id + '_1'),
+            cbb('Ввести', 'name_' + id + '_2')
         ],[
-            Markup.callbackButton('Отмена', 'cancel_'+task.id)
+            cbb('Отмена', 'cancel_' + id)
         ]
     ])
 }

@@ -40,8 +40,9 @@ KskWD.build('chrome').then(async wd => {
             if(newTasksId.length > 0){
                 currentLtId = newTasksId[0]
                 do{
-                    const task = await Task.build(ltId)
-                    storage.set(ltId, task)
+                    let tempId = newTasksId.shift()
+                    const task = await Task.build(tempId)
+                    storage.set(tempId, task)
                     task.sendToTelegramBot()
                 }while(newTasksId.length > 0)
             }

@@ -60,7 +60,7 @@ bot.action(/^answer_(\d{6,8})$/, async ctx => {
     `, {reply_markup: require('./kbs/kbName')(state[task])})
 })
 
-bot.action(/^name_(\d{6,8})_(\d)$/,async ctx => {
+bot.action(/^name_(\d{6,8})_(\d)$/, async ctx => {
     ctx.answerCbQuery()
     const mid = ctx.update.callback_query.message.message_id
     const task = ctx.match[1]
