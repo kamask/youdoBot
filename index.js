@@ -12,7 +12,7 @@ KskWD.build('chrome').then(async wd => {
 
     await new Promise(resolve => {
         setInterval(()=>{
-            if(storage.get('authCount') === 3) resolve()
+            if(storage.get('authCount') === 2) resolve()
         }, 300)
     })
 

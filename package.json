@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
-    "test": "node ./test.js"
+    "start": "node ."
   },
   "keywords": [],
   "author": "KamaSK",

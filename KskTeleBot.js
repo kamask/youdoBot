@@ -5,14 +5,13 @@ const Telegraf = require('telegraf')
 class self {
     #bot
     #chatId
-    t
     m = require('telegraf/markup')
 
     constructor() {
         this.#bot = new Telegraf(telegramBotToken)
         this.t = this.#bot.telegram
-        let delPassReq
 
+        let delPassReq
         this.#bot.start(ctx => {
             delPassReq = ctx.message.message_id
             this.t.sendMessage(ctx.message.chat.id, 'Назови своё любимое число)').then(ctx => {
@@ -28,7 +27,7 @@ class self {
                 this.delete(delPassReq)
                 delPassReq = null
             }
-            this.delete(ctx.message.message_id)
+            ctx.deleteMessage()
         })
 
         this.#bot.launch()
@@ -56,6 +55,10 @@ class self {
 
     action(action, handle) {
         this.#bot.action(action, handle)
+    }
+
+    hears(text, handle){
+        this.#bot.hears(text, handle)
     }
 }
 
