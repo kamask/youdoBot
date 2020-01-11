@@ -12,7 +12,7 @@ KskWD.build('chrome').then(async wd => {
 
     await new Promise(resolve => {
         setInterval(()=>{
-            if(storage.get('authCount') === 2) resolve()
+            if(storage.get('authCount') === 3) resolve()
         }, 300)
     })
 
@@ -25,9 +25,7 @@ KskWD.build('chrome').then(async wd => {
 
             if(!currentLtId){
                 currentLtId = ltId
-                const task = await Task.build(ltId)
-                storage.set(ltId, task)
-                task.sendToTelegramBot()
+                ;(await Task.build(ltId)).sendToTelegramBot()
             }
 
             let i = 3, newTasksId = []
@@ -41,9 +39,7 @@ KskWD.build('chrome').then(async wd => {
                 currentLtId = newTasksId[0]
                 do{
                     let tempId = newTasksId.shift()
-                    const task = await Task.build(tempId)
-                    storage.set(tempId, task)
-                    task.sendToTelegramBot()
+                    ;(await Task.build(tempId)).sendToTelegramBot()
                 }while(newTasksId.length > 0)
             }
 

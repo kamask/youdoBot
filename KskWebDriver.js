@@ -13,6 +13,8 @@ module.exports = class self{
         wd.#driver.manage().window().minimize()
 
         wd.sleep = wd.#driver.sleep
+        wd.d = wd.#driver
+        wd.u = until
 
         return wd
     }

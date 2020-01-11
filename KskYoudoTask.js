@@ -1,7 +1,8 @@
 function log(...p){console.log(...p)}
 const data = require('./data')
-const textNewTask = require('./tpl/telebot/newTask')
+const textNewTask = require('./textNewTask')
 const KskWD = require('./KskWebDriver')
+const AnswerTask = require('./KskAnswerTask')
 const tBot = require('./KskTeleBot')
 const cbb = tBot.m.callbackButton
 
@@ -58,6 +59,7 @@ class self{
 
         tBot.action('answer_'+ this.id, ctx => {
             ctx.answerCbQuery('Тебя выберут, не сомневайся)')
+            log('\n---\nAnswer make - '+this.id)
             ctx.editMessageReplyMarkup(require('./kbs/kbName')(this.info))
             this.answer = {}
             this.prepareAnswer()
@@ -151,9 +153,9 @@ class self{
                 parse_mode: "HTML"
             })
 
-            await new Promise(resolve => { setTimeout(resolve, 2000)})
+            const res = await AnswerTask.build(this)
 
-            ctx.editMessageText(this.answer.textTg, {
+            ctx.editMessageText(this.answer.textTg + '\n' + res, {
                 disable_web_page_preview: true,
                 parse_mode: "HTML"
             })
@@ -162,6 +164,7 @@ class self{
         tBot.action('cancel_'+this.id, ctx => {
             ctx.answerCbQuery()
             delete this.answer
+            log('Answer make canceled - '+this.id)
 
             ctx.editMessageText(textNewTask(this.info), {
                 parse_mode: 'HTML',
