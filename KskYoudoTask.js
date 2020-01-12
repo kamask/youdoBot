@@ -5,6 +5,8 @@ const KskWD = require('./KskWebDriver')
 const AnswerTask = require('./KskAnswerTask')
 const tBot = require('./KskTeleBot')
 const cbb = tBot.m.callbackButton
+const req = require('request-promise')
+const {ymapApiKey} = require('./config')
 
 class self{
 
@@ -51,6 +53,12 @@ class self{
     }
 
     async sendToTelegramBot(){
+        if(this.info.address !== 'Виртуальное задание') req(encodeURI('https://geocode-maps.yandex.ru/1.x/?apikey='+ymapApiKey+'&results=1&format=json&geocode='+this.info.address))
+            .then(res => {
+                const coord = JSON.parse(res).response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ').join(',')
+                tBot.photo('https://static-maps.yandex.ru/1.x/?l=map&ll='+coord+'&z=13&pt='+coord+',vkbkm')
+        })
+
         this.tgMsgId = (await tBot.send(textNewTask(this.info), {
             parse_mode: 'HTML',
             disable_web_page_preview: true,

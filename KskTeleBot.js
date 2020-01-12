@@ -38,6 +38,10 @@ class self {
         return this.t.sendMessage(this.#chatId, text, opt)
     }
 
+    photo(src){
+        this.#bot.telegram.sendPhoto(this.#chatId, src)
+    }
+
     delete(msg) {
         if (!this.#chatId) return false
         return this.t.deleteMessage(this.#chatId, msg)

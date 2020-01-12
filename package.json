@@ -10,6 +10,8 @@
   "author": "KamaSK",
   "license": "ISC",
   "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
     "selenium-webdriver": "^4.0.0-alpha.5",
     "telegraf": "^3.35.0"
   }
