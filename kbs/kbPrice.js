@@ -4,11 +4,14 @@ const cbb = Markup.callbackButton
 module.exports = id => {
     return Markup.inlineKeyboard([
         [
+            cbb('500', 'price_'+id+'_500'),
+            cbb('800', 'price_'+id+'_800'),
             cbb('1000', 'price_'+id+'_1000'),
             cbb('1200', 'price_'+id+'_1200'),
             cbb('1500', 'price_'+id+'_1500'),
             cbb('1800', 'price_'+id+'_1800')
         ],[
+            cbb('400', 'price_'+id+'_400'),
             cbb('2000', 'price_'+id+'_2000'),
             cbb('2200', 'price_'+id+'_2200'),
             cbb('2500', 'price_'+id+'_2500'),
