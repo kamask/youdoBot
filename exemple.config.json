@@ -1,7 +1,9 @@
 {
   "youdo": {
     "login": "",
-    "password": ""
+    "password": "",
+    "uid": ""
   },
-  "telegramBotToken": ""
+  "telegramBotToken": "",
+  "ymapApiKey": ""
 }
