@@ -1,33 +1,21 @@
-const {startPass} = require('./data')
-const {telegramBotToken} = require('./config')
 const Telegraf = require('telegraf')
 
 class self {
-    #bot
-    #chatId
+
     m = require('telegraf/markup')
 
-    constructor() {
-        this.#bot = new Telegraf(telegramBotToken)
+    constructor(token, chatId) {
+        this.#chatId = chatId
+        this.#bot = new Telegraf(token)
         this.t = this.#bot.telegram
+        this.action = this.#bot.action
+        this.hears = this.#bot.hears
 
-        let delPassReq
         this.#bot.start(ctx => {
-            delPassReq = ctx.message.message_id
-            this.t.sendMessage(ctx.message.chat.id, 'Назови своё любимое число)').then(ctx => {
+            let delPassReq = ctx.message.message_id
+            ctx.reply('Chat id: '+ctx.message.chat.id).then(ctx => {
                 this.t.deleteMessage(ctx.chat.id, delPassReq)
-                delPassReq = ctx.message_id
             })
-        })
-
-        this.#bot.hears(startPass, ctx => {
-            this.#chatId = ctx.message.chat.id
-            this.send('Ща всё будет)\nУдачи!')
-            if(delPassReq){
-                this.delete(delPassReq)
-                delPassReq = null
-            }
-            ctx.deleteMessage()
         })
 
         this.#bot.launch()
@@ -39,6 +27,7 @@ class self {
     }
 
     photo(src){
+        if (!this.#chatId) return false
         this.#bot.telegram.sendPhoto(this.#chatId, src)
     }
 
@@ -56,16 +45,8 @@ class self {
         if (!this.#chatId) return false
         return this.t.editMessageReplyMarkup(this.#chatId, msg, null, mark)
     }
-
-    action(action, handle) {
-        this.#bot.action(action, handle)
-    }
-
-    hears(text, handle){
-        this.#bot.hears(text, handle)
-    }
 }
 
-bot = new self()
+bot = new self(process.env.TELEGRAM_BOT_TOKEN, process.env.TELEGRAM_CHAT_ID)
 
 module.exports = bot

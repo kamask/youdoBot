@@ -1,18 +1,16 @@
 {
-  "name": "youdoBot",
+  "name": "youdobot_server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "server": "node ."
   },
-  "keywords": [],
   "author": "KamaSK",
   "license": "ISC",
   "dependencies": {
-    "request": "^2.88.0",
-    "request-promise": "^4.2.5",
-    "selenium-webdriver": "^4.0.0-alpha.5",
+    "connect": "^3.7.0",
+    "socket.io": "^2.3.0",
     "telegraf": "^3.35.0"
   }
 }
