@@ -1,7 +1,7 @@
 {
-  "name": "youdobot.server",
+  "name": "youdobot.local",
   "version": "1.0.0",
-  "description": "Server module for YoudoBot 2",
+  "description": "Local module for YoudoBot 2",
   "main": "index.js",
   "scripts": {
     "start": "node ."
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/kamask/youdoBot/issues"
   },
-  "homepage": "https://github.com/kamask/youdoBot#readme"
+  "homepage": "https://github.com/kamask/youdoBot#readme",
+  "dependencies": {
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  }
 }

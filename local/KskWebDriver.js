@@ -27,15 +27,16 @@ class self{
         }
     }
 
-    async findSelector(css, time = undefined, reload = false){
+    async findSelector(css, time = undefined, reload = false, countRefresh = null){
         let located
         while (true){
             try{
                 located = await this.d.wait(until.elementLocated(By.css(css)), time)
                 break
             }catch (e) {
-                if(reload){
+                if(reload && countRefresh !== 0){
                     await this.d.navigate().refresh()
+                    countRefresh--
                     continue
                 }
                 located = undefined
