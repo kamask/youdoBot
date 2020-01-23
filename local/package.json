@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kamask/youdoBot#readme",
   "dependencies": {
-    "selenium-webdriver": "^4.0.0-alpha.5"
+    "selenium-webdriver": "^4.0.0-alpha.5",
+    "socket.io-client": "^2.3.0"
   }
 }

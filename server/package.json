@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/kamask/youdoBot/issues"
   },
-  "homepage": "https://github.com/kamask/youdoBot#readme"
+  "homepage": "https://github.com/kamask/youdoBot#readme",
+  "dependencies": {}
 }

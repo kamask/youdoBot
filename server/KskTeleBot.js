@@ -2,6 +2,9 @@ const Telegraf = require('telegraf')
 
 class self {
 
+    #bot
+    #chatId
+
     m = require('telegraf/markup')
 
     constructor(token, chatId) {
