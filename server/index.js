@@ -19,4 +19,8 @@ io.on('connection', socket=> {
     socket.on('kskNewTask', ({id, title}) => {
         tBot.send('<a href="https://youdo.com/t'+id+'">'+title+'</a>', { disable_web_page_preview: true, parse_mode: 'HTML'})
     })
+
+    socket.on('kskTaskFullInfo', data => {
+        tBot.send(data)
+    })
 })

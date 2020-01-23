@@ -10,6 +10,7 @@ class self{
     async building(browser){
         try{
             this.d = await new Builder().forBrowser(browser).build()
+            this.state = {}
             return this
         }catch(e){
             console.error(e)

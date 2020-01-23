@@ -17,6 +17,8 @@ socket.on('kskTBot', data => {
     wdTW.d.manage().window().minimize()
     const wdTFI = await new WD().building('chrome') // tfi - Task Full Info
     wdTFI.d.manage().window().minimize()
+    wdTFI.state.busy = false
+    wdTFI.state.tasksStack = []
     const wdTA = await new WD().building('chrome') // tfi - Task Answer
     wdTA.d.manage().window().minimize()
 
@@ -76,12 +78,14 @@ socket.on('kskTBot', data => {
 
             if(!currentLtId){
                 currentLtId = ltId
+                log('\n---\nNew task - ' + ltId + ' | ' + new Date().toLocaleString('ru-RU'))
                 socket.emit('kskNewTask', {id: ltId, title: ltText})
-                // ;(await Task.build(ltId)).sendToTelegramBot()
+                sendToTelegramBot(ltId)
             }
 
             let i = 3, newTasksId = []
             while(currentLtId < ltId){
+                log('\n---\nNew task - ' + ltId + ' | ' + new Date().toLocaleString('ru-RU'))
                 socket.emit('kskNewTask', {id: ltId, title: ltText})
                 newTasksId.push(ltId)
                 ltLink = await wdTW.findSelector('li.listItem___a431d:nth-child(' + i++ + ') > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)')
@@ -93,7 +97,7 @@ socket.on('kskTBot', data => {
                 currentLtId = newTasksId[0]
                 do{
                     let tempId = newTasksId.shift()
-                    //;(await Task.build(tempId)).sendToTelegramBot()
+                    sendToTelegramBot(tempId)
                 }while(newTasksId.length > 0)
             }
 
@@ -103,7 +107,35 @@ socket.on('kskTBot', data => {
             console.error(e)
             break
         }
+    }
 
+    async function sendToTelegramBot(id){
+        if(!wdTFI.state.busy){
+
+            wdTFI.state.busy = true
+            log('Task info getting - ' + id + ' ...')
+            await wdTFI.open('https://youdo.com/t' + id)
+            const infoWrapper = await wdTFI.findSelector('.b-task-item-base-info', 5000, true)
+            const userInfo = await wdTFI.findSelector('.b-task-block__userinfo__name', 5000, true)
+            socket.emit('kskTaskFullInfo', {
+                id,
+                title: await (await infoWrapper.findElement(WD.by.css('.b-task-block__header__title'))).getText(),
+                text: await (await infoWrapper.findElement(WD.by.css('.b-task-block__description'))).getText(),
+                address: await (await infoWrapper.findElement(WD.by.css('.b-task-block__address > .b-task-block__info'))).getText(),
+                date: await (await infoWrapper.findElement(WD.by.css('.b-task-block__date__wrap'))).getText(),
+                price: await (await infoWrapper.findElement(WD.by.css('.b-task-block__budget > .b-task-block__info'))).getText(),
+                priceMethod: await (await infoWrapper.findElement(WD.by.css('.b-task-block__payment > .b-task-block__info'))).getText(),
+                place: await (await infoWrapper.findElement(WD.by.css('.b-task-block__location > .b-task-block__info'))).getText(),
+                name: await userInfo.getText(),
+                authorLink: await  userInfo.getAttribute('href')
+            })
+            log('Task info getting done! - ' + id + '\n---')
+            wdTFI.state.busy = false
+            if(wdTFI.state.tasksStack.length > 0) sendToTelegramBot(wdTFI.state.tasksStack.shift())
+
+        }else{
+            wdTFI.state.tasksStack.push(id)
+        }
     }
 
 
