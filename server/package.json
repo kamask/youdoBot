@@ -4,7 +4,7 @@
   "description": "Server module for YoudoBot 2",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "serv": "node ."
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,12 @@
     "url": "https://github.com/kamask/youdoBot/issues"
   },
   "homepage": "https://github.com/kamask/youdoBot#readme",
-  "dependencies": {}
+  "dependencies": {
+    "connect": "^3.7.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
+    "socket.io": "^2.3.0",
+    "telegraf": "^3.35.0"
+  },
+  "devDependencies": {}
 }

@@ -1,11 +1,14 @@
 function log(m){console.log(m)}
 const WD =  require('./KskWebDriver')
 const io = require('socket.io-client')
-const socket = io.connect('http://youdobot.sha88.ru')
+const socket = io.connect(process.env.TELEGRAM_BOT_SERVER)
 socket.on('connect', ()=>{
     socket.emit('kskConnect', 'Local App')
 })
 socket.on('kskTBot', data => {
+    log(data)
+})
+socket.on('kskLog', data => {
     log(data)
 })
 

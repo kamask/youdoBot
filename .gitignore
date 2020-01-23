@@ -4,3 +4,4 @@
 
 /local/package-lock.json
 /local/node_modules/
+/server/tmp/

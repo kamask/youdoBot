@@ -1,7 +1,7 @@
 const Markup = require('telegraf/markup')
 const cbb = Markup.callbackButton
 
-module.exports = ({id, name}) => {
+module.exports = (id, name) => {
     return Markup.inlineKeyboard([
         [
             cbb(name.split(' ')[0], 'name_' + id + '_1'),

@@ -11,8 +11,6 @@ class self {
         this.#chatId = chatId
         this.#bot = new Telegraf(token)
         this.t = this.#bot.telegram
-        this.action = this.#bot.action
-        this.hears = this.#bot.hears
 
         this.#bot.start(ctx => {
             let delPassReq = ctx.message.message_id
@@ -47,6 +45,14 @@ class self {
     editMarkup(msg, mark) {
         if (!this.#chatId) return false
         return this.t.editMessageReplyMarkup(this.#chatId, msg, null, mark)
+    }
+
+    action(trigger, handler){
+        this.#bot.action(trigger, handler)
+    }
+
+    hears(trigger, handler){
+        this.#bot.hears(trigger, handler)
     }
 }
 
