@@ -11,6 +11,7 @@ socket.on('kskTBot', data => {
 socket.on('kskLog', data => {
     log(data)
 })
+let wdTA
 
 ;(async ()=>{
 
@@ -22,7 +23,7 @@ socket.on('kskLog', data => {
     wdTFI.d.manage().window().minimize()
     wdTFI.state.busy = false
     wdTFI.state.tasksStack = []
-    const wdTA = await new WD().building('chrome') // tfi - Task Answer
+    wdTA = await new WD().building('chrome') // tfi - Task Answer
     wdTA.d.manage().window().minimize()
 
 
@@ -142,8 +143,19 @@ socket.on('kskLog', data => {
     }
 
 
-
-    wdTFI.d.sleep(60000)
-    wdTA.d.sleep(60000)
-
 })()
+
+socket.on('kskAnswer', async data => {
+    log('Answer sending... - ' + data.id)
+    await wdTA.open('https://youdo.com/t' + data.id)
+    await (await wdTA.findSelector('.b-task-reactions__button')).click()
+    await wdTA.findSelector('.b-dialog--add_offer__tpl__item')
+    await (await wdTA.findSelector('.js-description')).sendKeys(data.text)
+    await (await wdTA.findSelector('label[for=\'Field__Insurance\']')).click()
+    await (await wdTA.findSelector('.b-dialog--add_offer__price__value')).sendKeys(data.price, WD.key.RETURN)
+    await wdTA.reload(2000)
+    const place = await (await wdTA.findSelector('.b-task-block__offers__description__text')).getText()
+    const visit = await (await wdTA.d.findElement(WD.by.css('li.item___72b99:nth-child(2)'))).getText()
+    log('Answer send! - ' + data.id)
+    socket.emit('kskAnswerData', (place + '\n' + visit))
+})
