@@ -24,17 +24,13 @@ io.on('connection', socket=> {
         tBot.send(data + ' connected!')
     })
 
-    socket.on('kskNewTask', ({id, title}) => {
-        tBot.send('<a href="https://youdo.com/t'+id+'">'+title+'</a>', { disable_web_page_preview: true, parse_mode: 'HTML'})
-    })
-
-    socket.on('kskTaskFullInfo', async data => {
-        if(data.address !== 'Виртуальное задание') req(encodeURI('https://geocode-maps.yandex.ru/1.x/?apikey='+process.env.YMAP_API_KEY+'&results=1&format=json&geocode='+data.address))
+    socket.on('kskNewTask', async data => {
+        if(data.address) req(encodeURI('https://geocode-maps.yandex.ru/1.x/?apikey='+process.env.YMAP_API_KEY+'&results=1&format=json&geocode='+data.address))
             .then(res => {
                 const point = JSON.parse(res).response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ').join(',')
                 tBot.photo('https://static-maps.yandex.ru/1.x/?l=map&ll='+point+'&z=13&pt='+point+',vkbkm')
             })
-
+        data.id = String(data.id)
         tasks.set(data.id, data)
         let task = tasks.get(data.id)
 
@@ -43,6 +39,13 @@ io.on('connection', socket=> {
             disable_web_page_preview: true,
             reply_markup: tBot.m.inlineKeyboard([cbb('Предложить помощь', 'answer_'+data.id)])
         })).message_id
+        const avatarId = task.userAvatar.split('?')[1].split('&')[0].split('=')[1]
+        if(avatarId !== '0') tBot.photo(task.userAvatar)
+        if(task.photo.length > 0){
+            task.photo.forEach(i => {
+                tBot.photo(i)
+            })
+        }
     })
 
     socket.on('kskAnswerData', data => {
@@ -58,7 +61,7 @@ tBot.action(/^answer_(\d{6,10})$/, ctx => {
     }
     const task = tasks.get(ctx.match[1])
     io.sockets.emit('kskLog', '\n---\nAnswer make - '+task.id)
-    ctx.editMessageReplyMarkup(require('./kbs/kbName')(task.id, task.name))
+    ctx.editMessageReplyMarkup(require('./kbs/kbName')(task.id, task.userName))
     task.answer = {}
 })
 
@@ -69,7 +72,7 @@ tBot.action(/^name_(\d{6,10})_(\d)$/, async ctx => {
     const task = tasks.get(ctx.match[1])
     waitNewNameForAnswer.id = task.id
     if(ctx.match[2] === '2') waitNewNameForAnswer.idMsg = (await ctx.reply('Как будем обращаться? (=Имя)')).message_id
-    else setName(ctx.match[2] === '1' ? task.name.split(' ')[0] : '')
+    else setName(ctx.match[2] === '1' ? task.userName.split(' ')[0] : '')
 })
 
 tBot.hears(/^=([а-яА-ЯёЁ]{2,15}\s?[а-яА-ЯёЁ]{0,15})$/, ctx => {
@@ -87,7 +90,7 @@ function setName(name){
     task.answer.name = name
     task.answer.textTg = textNewTask(task) +
         '**************************\n' +
-        'Задание №' + task.id + '\n\n' +
+        'Задание №' + task.id + '\n' +
         'Имя в шаблоне: ' + (task.answer.name || 'без имени') +
         '\n--------------------------'
 
