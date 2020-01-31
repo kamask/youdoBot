@@ -1,4 +1,5 @@
 const {Builder, Key, until, WebDriver} = require('selenium-webdriver')
+const chrome = require('selenium-webdriver/chrome')
 
 class self{
 
@@ -8,7 +9,7 @@ class self{
 
     async building(browser){
         try{
-            this.d = await new Builder().forBrowser(browser).build()
+            this.d = await new Builder().forBrowser(browser).setChromeOptions(new chrome.Options().headless()).build()
             this.state = {}
             return this
         }catch(e){

@@ -2,6 +2,8 @@ function log(m){console.log(m)}
 const WD =  require('./KskWebDriver')
 const io = require('socket.io-client')
 const socket = io.connect(process.env.TELEGRAM_BOT_SERVER)
+let currentLtId = 0
+
 socket.on('connect', ()=>{
     socket.emit('kskConnect', 'Local App')
 })
@@ -11,6 +13,9 @@ socket.on('kskTBot', data => {
 socket.on('kskLog', data => {
     log(data)
 })
+socket.on('kskLast', ()=>{
+    currentLtId = 0
+})
 let wdGT, wdTA
 
 ;(async ()=>{
@@ -18,11 +23,11 @@ let wdGT, wdTA
     /*--------------------- INIT and AUTH   --------------------------------------------*/
 
     wdGT = await new WD().building('chrome') // GT - Get Task
-    wdGT.d.manage().window().minimize()
+    //wdGT.d.manage().window().minimize()
     wdGT.d.get('https://youdo.com')
 
     wdTA = await new WD().building('chrome') // TA - Task Answer
-    wdTA.d.manage().window().minimize()
+    //wdTA.d.manage().window().minimize()
     wdTA.d.get('https://youdo.com')
 
     let auth, authCount = 0, authTrying = 0
@@ -30,7 +35,7 @@ let wdGT, wdTA
     do{
         log('Auth trying - ' + (++authTrying))
         await wdGT.d.get('https://youdo.com')
-        let res = await wdGT.d.executeScript(async () => {
+        await wdGT.d.executeScript(async () => {
             return await fetch('/api/users/signin/', {
                 headers: {
                     "accept": "application/json",
@@ -40,8 +45,12 @@ let wdGT, wdTA
                 body: 'login='+arguments[0]+'&password='+arguments[1]
             })
         }, process.env.YOUDO_LOGIN, process.env.YOUDO_PASS)
-        await wdGT.reload()
-        auth = await wdGT.d.executeScript(()=>window.YouDo.GuardCheck.isAuth)
+        await wdGT.reload(3000)
+        try{
+            auth = await wdGT.d.executeScript(()=>window.YouDo.GuardCheck.isAuth)
+        }catch(e){
+            continue
+        }
     }while(!auth)
 
     log('WebDriver: Task Watcher - auth!')
@@ -60,7 +69,7 @@ let wdGT, wdTA
 
     /*--------------------- Get Tasks and send to server   --------------------------------------------*/
 
-    let currentLtId = 0
+
     while(authCount === 2){
         try{
 
@@ -102,27 +111,36 @@ let wdGT, wdTA
             }
 
             currentLtId = tasks[0].Id
-            await wdGT.reload(500)
+            await wdGT.reload(1000)
 
         }catch(e){
             console.error(e)
-            break
+            continue
         }
     }
 
 })()
 
 socket.on('kskAnswer', async data => {
-    log('Answer sending... - ' + data.id)
-    await wdTA.d.get('https://youdo.com/t' + data.id)
-    await (await wdTA.find({css: 'a.b-task-reactions__button'})).click()
-    const form = await wdTA.find({css: '.js-form'})
-    await (await form.find({css: '.js-description'})).sendKeys(data.text)
-    await (await form.find({css: 'label[for=\'Field__Insurance\']'})).click()
-    await (await form.find({css: '.b-dialog--add_offer__price__value'})).sendKeys(data.price, WD.key.RETURN)
-    await wdTA.reload(2000)
-    const place = await (await wdTA.find({css: '.b-task-block__offers__description__text'})).getText()
-    const visit = await (await wdTA.d.findElement({css: 'li.item___72b99:nth-child(2)'})).getText()
-    log('Answer send! - ' + data.id)
-    socket.emit('kskAnswerData', (place + '\n' + visit))
+    let done = false
+    while(!done){
+        log('Answer sending... - ' + data.id)
+        await wdTA.d.get('https://youdo.com/t' + data.id)
+        await wdTA.find({css: '.b-task-reactions__button'})
+        await wdTA.d.executeScript("document.querySelector('.b-task-reactions__button').click()")
+        await wdTA.find({css: '.dialog__content > form'})
+        await wdTA.d.executeScript(()=>{
+            document.querySelector('.b-dialog--add_offer__description > textarea').value = arguments[0]
+            document.querySelector('.b-dialog--add_offer__price__value').value = arguments[1]
+            document.querySelector('#Field__Insurance').checked = false
+            document.querySelector('.b-dialog--add_offer__submit').click()
+        }, data.text, data.price)
+        await wdTA.reload(2000)
+        const place = await (await wdTA.find({css: '.b-task-block__offers__description__text'})).getText()
+        const visit = await (await wdTA.d.findElement({css: 'li.item___72b99:nth-child(2)'})).getText()
+        log('Answer send! - ' + data.id)
+        done = true
+        socket.emit('kskAnswerData', (place + '\n' + visit))
+    }
+
 })

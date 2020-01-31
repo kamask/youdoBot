@@ -51,6 +51,10 @@ io.on('connection', socket=> {
     socket.on('kskAnswerData', data => {
         answerData = data
     })
+
+    tBot.hears('t', ()=>{
+        socket.emit('kskLast', true)
+    })
 })
 
 tBot.action(/^answer_(\d{6,10})$/, ctx => {
