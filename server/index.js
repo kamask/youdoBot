@@ -51,10 +51,6 @@ io.on('connection', socket=> {
     socket.on('kskAnswerData', data => {
         answerData = data
     })
-
-    tBot.hears('t', ()=>{
-        socket.emit('kskLast', true)
-    })
 })
 
 tBot.action(/^answer_(\d{6,10})$/, ctx => {
@@ -195,3 +191,15 @@ tBot.action(/^cancel_(\d{6,10})$/, ctx => {
         reply_markup: tBot.m.inlineKeyboard([cbb('Предложить помощь', 'answer_'+task.id)])
     })
 })
+
+
+
+tBot.hears('last', ()=>{
+    io.sockets.emit('kskLast', true)
+})
+
+tBot.hears(/^id(\d{6,10})$/, ctx=>{
+    io.sockets.emit('kskGetWithId', ctx.match[1])
+})
+
+

@@ -13,7 +13,7 @@ module.exports = function ({id, title, text, date, address, place, price, budget
 <b><a href="https://youdo.com/t${id}">${title}</a></b>
 ${text}
 -------------------
-${date.begin ? 'Начать: '+dateFormat(date.begin)+' ' : ''}${date.end ? 'Закончить: '+dateFormat(date.end) : ''}
+${date.begin ? 'Начать: '+dateFormat(date.begin)+' ' : ''}${date.end ? '\nЗакончить: '+dateFormat(date.end) : ''}
 -------------------
 ${address ? '<a href="https://yandex.ru/maps/?text='+address+'">'+address+'</a>\n'+place : place}
 -------------------
