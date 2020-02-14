@@ -33,12 +33,13 @@ io.on('connection', socket=> {
         data.id = String(data.id)
         tasks.set(data.id, data)
         let task = tasks.get(data.id)
-
-        task.tgMsgId = (await tBot.send(textNewTask(task), {
+        await tBot.send(task.title)
+        const resFromTelegramApi = await tBot.send(textNewTask(task), {
             parse_mode: 'HTML',
             disable_web_page_preview: true,
             reply_markup: tBot.m.inlineKeyboard([cbb('Предложить помощь', 'answer_'+data.id)])
-        })).message_id
+        })
+        task.tgMsgId = resFromTelegramApi.message_id
         const avatarId = task.userAvatar.split('?')[1].split('&')[0].split('=')[1]
         if(avatarId !== '0') tBot.photo(task.userAvatar)
         if(task.photo.length > 0){

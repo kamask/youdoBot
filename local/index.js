@@ -6,6 +6,9 @@ let currentLtId = 0, getWithId = null
 
 socket.on('connect', ()=>{
     socket.emit('kskConnect', 'Local App')
+    setInterval(()=>{
+        socket.emit('kskConnected', 'Local App')
+    }, 60_000)
 })
 socket.on('kskTBot', data => {
     log(data)
@@ -51,7 +54,7 @@ async function main(){
                 arguments[2](e)
             })
         }, process.env.YOUDO_LOGIN, process.env.YOUDO_PASS)
-        await wdGT.reload()
+        await wdGT.reload(1500)
         try{ auth = await wdGT.d.executeScript(()=>window.YouDo.GuardCheck.isAuth) }catch(e){}
     }while(!auth)
 
@@ -64,6 +67,7 @@ async function main(){
     auth = false
     do{
         await wdTA.d.get('https://youdo.com')
+        await wdGT.d.sleep(1000)
         try{ auth = await wdTA.d.executeScript(()=>window.YouDo.GuardCheck.isAuth) }catch(e){}
     }while (!auth)
 
@@ -115,7 +119,6 @@ async function main(){
                     return 1
                 }
             }
-
             socket.emit('kskNewTask', task)
         }
 
@@ -135,7 +138,6 @@ async function main(){
             log('\nNew task - ' + tasks[i].Id + ' | ' + new Date().toLocaleString('ru-RU'))
             const task = {
                 id: tasks[i].Id,
-                title: tasks[i].Name,
                 price: tasks[i].PriceAmount,
                 budget: tasks[i].BudgetDescription,
                 secure: tasks[i].IsSbr,
@@ -157,9 +159,10 @@ async function main(){
                 return 1
             }
 
-            task.place = taskFull.AttributesValues.Location.Concatenated
+            try{ task.place = taskFull.AttributesValues.Location.Concatenated }catch(e){ task.place = '' }
             taskFull = taskFull.TaskData
             task.text = taskFull.Description
+            task.title = taskFull.Title
             task.date = {created: taskFull.Dates.CreationDate}
             task.date.begin = taskFull.Dates.NeedBeginDate
             task.date.end = taskFull.Dates.NeedEndDate
