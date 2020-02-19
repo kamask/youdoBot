@@ -7,10 +7,11 @@ class self{
     static until = until
     static WD = WebDriver
 
-    async building(browser){
+    async building(browser, visible = false){
         try{
-            this.d = await new Builder().forBrowser(browser).setChromeOptions(new chrome.Options().headless()).build()
+            this.d = visible ? await new Builder().forBrowser(browser).build() : await new Builder().forBrowser(browser).setChromeOptions(new chrome.Options().headless()).build()
             this.state = {}
+            this.key = self.key
             return this
         }catch(e){
             console.error(e)

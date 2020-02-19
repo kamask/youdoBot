@@ -1,10 +1,10 @@
 {
-  "name": "youdobot.server",
-  "version": "1.0.0",
-  "description": "Server module for YoudoBot 2",
+  "name": "youdobot",
+  "version": "3.0.0",
+  "description": "YouDo tasks get and answer bot",
   "main": "index.js",
   "scripts": {
-    "serv": "node ."
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -17,11 +17,8 @@
   },
   "homepage": "https://github.com/kamask/youdoBot#readme",
   "dependencies": {
-    "connect": "^3.7.0",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5",
-    "socket.io": "^2.3.0",
-    "telegraf": "^3.35.0"
-  },
-  "devDependencies": {}
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  }
 }
