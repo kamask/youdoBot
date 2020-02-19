@@ -14,7 +14,6 @@ class self{
         let taskFull = await YBot.wdGT.d.executeScript(()=>{
             return JSON.parse(document.querySelector('pre').innerText).ResultObject
         })
-        log(taskFull)
 
         try{ this.place = taskFull.AttributesValues.Location.Concatenated }catch(e){ this.place = '' }
         taskFull = taskFull.TaskData
