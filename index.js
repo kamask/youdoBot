@@ -40,7 +40,7 @@ global.exitApp = false
                     i++
                 }
 
-                currentLtId = allTasks[0].Id
+                if(currentLtId < allTasks[0].Id) currentLtId = allTasks[0].Id
 
                 await YBot.wdGT.d.sleep(1000)
 
