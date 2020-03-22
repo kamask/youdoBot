@@ -9,7 +9,7 @@ class self {
     static async init(){
         self.wdGT = await new WD().building('chrome') // GT - Get Task
 
-        self.wdTA = await new WD().building('chrome') // TA - Task Answer
+        self.wdTA = await new WD().building('chrome', true) // TA - Task Answer
 
         let auth, authTrying = 0
         do{

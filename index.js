@@ -27,8 +27,10 @@ global.exitApp = false
 
                 await YBot.wdGT.d.get('https://youdo.com/api/tasks/tasks/?q=&list=all&status=opened&lat=55.753215&lng=37.622504&radius=30&page=1&noOffers=false&onlySbr=false&onlyB2B=false&priceMin=&sortType=1&onlyVirtual=false&sub=30&sub=34&sub=32&sub=110&sub=84&sub=109&sub=90')
                 const allTasks = await YBot.wdGT.d.executeScript(()=>{
-                    return JSON.parse(document.querySelector('pre').innerText).ResultObject.Items
+                    return document.querySelector('pre') ? JSON.parse(document.querySelector('pre').innerText).ResultObject.Items : null
                 })
+                
+                if(!allTasks) continue
 
                 let i = 0
                 while(currentLtId < allTasks[i].Id){

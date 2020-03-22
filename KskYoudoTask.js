@@ -79,7 +79,7 @@ ${this.price || this.budget} ${this.secure ? 'Картой' : 'Наличкой'
         if(this.address) rp(encodeURI('https://geocode-maps.yandex.ru/1.x/?apikey='+process.env.YMAP_API_KEY+'&results=1&format=json&geocode='+this.address))
             .then(res => {
                 const point = JSON.parse(res).response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ').join(',')
-                TBot.send('sendPhoto', {photo: 'https://static-maps.yandex.ru/1.x/?l=map&ll='+point+'&z=13&pt='+point+',vkbkm', caption: this.title})
+                TBot.send('sendPhoto', {photo: 'https://static-maps.yandex.ru/1.x/?l=map&ll='+point+'&z=13&pt='+point+',vkbkm', caption: this.address})
             })
 
         const avatarId = this.userAvatar.split('?')[1].split('&')[0].split('=')[1]
@@ -96,7 +96,8 @@ ${this.price || this.budget} ${this.secure ? 'Картой' : 'Наличкой'
     async sendAnswer(){
         const templateData = require('./templateData')
         let template = templateData.templateText[Number(this.answer.templateName)]
-        let place, visit, text = `Здравствуйте${this.answer.name ? ' '+this.answer.name : ''}! Готов ${this.answer.templateName === '9' ? 'приступить ' : 'приехать '} ${this.answer.time[0] === '0' ? '' : templateData.time[Number(this.answer.time[0])] + ' или '}в удобное для Вас время и дату${this.answer.time[1] === '1' ? ', на данный момент свободен' : ''}. Согласен на ${this.answer.price}руб.
+        let place, visit, text = `Здравствуйте${this.answer.name ? ' '+this.answer.name : ''}!
+Готов ${this.answer.templateName === '9' ? 'приступить ' : 'приехать '} ${this.answer.time[0] === '0' ? '' : templateData.time[Number(this.answer.time[0])] + ' или '}в удобное для Вас время и дату${this.answer.time[1] === '1' ? ', на данный момент свободен' : ''}. Согласен на ${this.answer.price}руб.
 
 ${template ? template+'\n' : ''}Мой сайт-визитка с более подробной информацией - mskmaster.tilda.ws
 
@@ -111,7 +112,7 @@ ${template ? template+'\n' : ''}Мой сайт-визитка с более п�
 
         await (await YBot.wdTA.d.findElement({css: '.b-dialog--add_offer__description > textarea'})).sendKeys(text)
         await (await YBot.wdTA.d.findElement({css: '.label[for="Field__Insurance"]'})).click()
-        await (await YBot.wdTA.d.findElement({css: '.b-dialog--add_offer__price__value'})).sendKeys(this.answer.price, YBot.wdTA.key.RETURN)
+        await (await YBot.wdTA.d.findElement({css: '.b-dialog--add_offer__price__value'})).sendKeys(YBot.wdTA.key.CLEAR , this.answer.price, YBot.wdTA.key.RETURN)
 
         await YBot.wdTA.reload(3000)
 
