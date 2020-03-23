@@ -1,11 +1,12 @@
 const log = (...m) => console.log(...m)
+require('dotenv').config()
 const TBot = require('./KskTelegramBot')
 const Task = require('./KskYoudoTask')
 const YBot = require('./KskYoudoBot')
 const http = require('http')
 let restart = false, stop = false, currentLtId = 0
 
-http.createServer({}, TBot.listenWebhook).listen(3000)
+http.createServer({}, TBot.listenWebhook).listen(3001)
 
 
 const tasks = new Map()

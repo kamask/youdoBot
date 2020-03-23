@@ -1,10 +1,5 @@
 .idea/
-/server/node_modules/
-/server/package-lock.json
-/server/tmp/
-
-/local/package-lock.json
-/local/node_modules/
-
 package-lock.json
 /node_modules/
+.env
+.vscode/

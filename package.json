@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kamask/youdoBot#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "selenium-webdriver": "^4.0.0-alpha.5"
